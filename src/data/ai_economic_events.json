@@ -1,0 +1,222 @@
+[
+  {
+    "date": "2020-03-11",
+    "title": "WHO declares COVID-19 a global pandemic",
+    "category": "economic"
+  },
+  {
+    "date": "2020-03-27",
+    "title": "US CARES Act signed — $2.2 trillion stimulus",
+    "category": "economic"
+  },
+  {
+    "date": "2020-09-01",
+    "title": "GitHub Copilot technical preview begins internally",
+    "category": "ai"
+  },
+  {
+    "date": "2021-06-29",
+    "title": "GitHub Copilot launched — AI pair programmer powered by Codex",
+    "category": "ai"
+  },
+  {
+    "date": "2021-08-10",
+    "title": "OpenAI Codex released — code generation model",
+    "category": "ai"
+  },
+  {
+    "date": "2021-11-09",
+    "title": "US inflation hits 6.2% — highest in 30 years",
+    "category": "economic"
+  },
+  {
+    "date": "2022-01-26",
+    "title": "Fed signals aggressive rate hikes ahead",
+    "category": "economic"
+  },
+  {
+    "date": "2022-03-16",
+    "title": "Fed raises rates — first hike since 2018",
+    "category": "economic"
+  },
+  {
+    "date": "2022-03-22",
+    "title": "GitHub Copilot general availability announced",
+    "category": "ai"
+  },
+  {
+    "date": "2022-05-01",
+    "title": "Tech stock selloff intensifies — NASDAQ down 25% YTD",
+    "category": "economic"
+  },
+  {
+    "date": "2022-06-15",
+    "title": "Fed raises rates 75 bps — largest hike since 1994",
+    "category": "economic"
+  },
+  {
+    "date": "2022-09-07",
+    "title": "Amazon CodeWhisperer preview launched",
+    "category": "ai"
+  },
+  {
+    "date": "2022-11-04",
+    "title": "Meta lays off 11,000 — largest tech layoff of the year",
+    "category": "economic"
+  },
+  {
+    "date": "2022-11-30",
+    "title": "ChatGPT released — code assistance becomes mainstream",
+    "category": "ai"
+  },
+  {
+    "date": "2023-01-04",
+    "title": "Amazon announces 18,000 layoffs",
+    "category": "economic"
+  },
+  {
+    "date": "2023-01-18",
+    "title": "Microsoft announces 10,000 layoffs",
+    "category": "economic"
+  },
+  {
+    "date": "2023-01-20",
+    "title": "Google announces 12,000 layoffs",
+    "category": "economic"
+  },
+  {
+    "date": "2023-02-07",
+    "title": "Bing Chat with code capabilities launched",
+    "category": "ai"
+  },
+  {
+    "date": "2023-03-10",
+    "title": "Silicon Valley Bank collapses — largest bank failure since 2008",
+    "category": "economic"
+  },
+  {
+    "date": "2023-03-14",
+    "title": "GPT-4 released — major coding ability improvements",
+    "category": "ai"
+  },
+  {
+    "date": "2023-03-22",
+    "title": "GitHub Copilot X announced — chat and CLI agents",
+    "category": "ai"
+  },
+  {
+    "date": "2023-04-13",
+    "title": "Amazon CodeWhisperer becomes free for individuals",
+    "category": "ai"
+  },
+  {
+    "date": "2023-05-11",
+    "title": "Google announces Codey — PaLM 2 coding model",
+    "category": "ai"
+  },
+  {
+    "date": "2023-07-01",
+    "title": "Fed pauses rate hikes at 5.25-5.5%",
+    "category": "economic"
+  },
+  {
+    "date": "2023-07-18",
+    "title": "Meta releases Code Llama — open-source code model",
+    "category": "ai"
+  },
+  {
+    "date": "2023-08-24",
+    "title": "WizardCoder released — state-of-art open coding model",
+    "category": "ai"
+  },
+  {
+    "date": "2023-10-04",
+    "title": "Replit launches Replit Agent — autonomous coding assistant",
+    "category": "ai"
+  },
+  {
+    "date": "2023-11-06",
+    "title": "GPT-4 Turbo with 128k context for larger codebases",
+    "category": "ai"
+  },
+  {
+    "date": "2024-01-30",
+    "title": "DeepSeek Coder released — strong open-source code model",
+    "category": "ai"
+  },
+  {
+    "date": "2024-02-08",
+    "title": "GitHub Copilot Enterprise with codebase awareness",
+    "category": "ai"
+  },
+  {
+    "date": "2024-03-04",
+    "title": "Claude 3 released — top-tier coding capabilities",
+    "category": "ai"
+  },
+  {
+    "date": "2024-03-12",
+    "title": "Devin announced — first AI software engineer agent",
+    "category": "ai"
+  },
+  {
+    "date": "2024-04-09",
+    "title": "Llama 3 released — Meta's strongest open model yet",
+    "category": "ai"
+  },
+  {
+    "date": "2024-05-13",
+    "title": "GPT-4o released — faster coding assistance",
+    "category": "ai"
+  },
+  {
+    "date": "2024-06-20",
+    "title": "Claude 3.5 Sonnet — best-in-class coding benchmarks",
+    "category": "ai"
+  },
+  {
+    "date": "2024-08-01",
+    "title": "Cursor IDE gains popularity — AI-native code editor",
+    "category": "ai"
+  },
+  {
+    "date": "2024-09-12",
+    "title": "OpenAI o1 released — reasoning model for complex code",
+    "category": "ai"
+  },
+  {
+    "date": "2024-09-18",
+    "title": "Fed cuts rates 50 bps — first cut since 2020",
+    "category": "economic"
+  },
+  {
+    "date": "2024-10-22",
+    "title": "Claude computer use — AI agent controls desktop",
+    "category": "ai"
+  },
+  {
+    "date": "2024-10-29",
+    "title": "Windsurf Editor launched — agentic IDE by Codeium",
+    "category": "ai"
+  },
+  {
+    "date": "2024-12-20",
+    "title": "OpenAI o3 announced — breakthrough reasoning for coding",
+    "category": "ai"
+  },
+  {
+    "date": "2025-01-20",
+    "title": "DeepSeek R1 released — open-source reasoning model",
+    "category": "ai"
+  },
+  {
+    "date": "2025-02-24",
+    "title": "Claude 3.7 Sonnet with extended thinking for code",
+    "category": "ai"
+  },
+  {
+    "date": "2025-03-04",
+    "title": "Cursor Agent mode — autonomous multi-file editing",
+    "category": "ai"
+  }
+]

@@ -1,0 +1,509 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0f1117;
+  color: #e0e0e0;
+  padding: 20px;
+  padding-top: 72px;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────────────── */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #161821;
+  border-bottom: 1px solid #2a2d3a;
+  padding: 0 28px;
+  height: 52px;
+}
+
+.nav-brand {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #6c63ff;
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-link {
+  color: #8a8da0;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #e0e0e0;
+  background: rgba(108, 99, 255, 0.1);
+}
+
+.nav-link.active {
+  color: #fff;
+  background: #6c63ff;
+}
+
+/* ── Headings ────────────────────────────────────────────────────────── */
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+  color: #f5f5f5;
+}
+
+/* ── Chart Title Row + Year Dropdown ──────────────────────────────────── */
+
+.chart-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.chart-title-row h2 {
+  margin-bottom: 0;
+}
+
+.year-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #252836 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8da0'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid #2a2d3a;
+  border-radius: 8px;
+  padding: 6px 30px 6px 12px;
+  color: #e0e0e0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.year-dropdown:hover {
+  border-color: #6c63ff;
+}
+
+.year-dropdown:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
+}
+
+.year-dropdown option {
+  background: #1a1d27;
+  color: #e0e0e0;
+}
+
+/* ── Dashboard Grid ──────────────────────────────────────────────────── */
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Chart Containers ────────────────────────────────────────────────── */
+
+.chart-container {
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  border-radius: 10px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.chart-container h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a0a4b8;
+  margin-bottom: 12px;
+}
+
+#timeline {
+  grid-column: 1 / -1;
+}
+
+#map {
+  grid-column: 1;
+}
+
+#treemap {
+  grid-column: 2;
+}
+
+.chart-area {
+  width: 100%;
+  overflow: hidden;
+}
+
+.chart-area svg {
+  display: block;
+}
+
+/* ── Dashboard Chart Styles ──────────────────────────────────────────── */
+
+.bar {
+  fill: #6c63ff;
+  transition: fill 0.15s;
+}
+.bar:hover {
+  fill: #8b83ff;
+}
+
+.axis text {
+  fill: #8a8da0;
+  font-size: 11px;
+}
+.axis path,
+.axis line {
+  stroke: #2a2d3a;
+}
+
+.map-land {
+  fill: #252836;
+  stroke: #3a3d4f;
+  stroke-width: 0.4;
+}
+
+.bubble {
+  fill: rgba(255, 99, 71, 0.45);
+  stroke: rgba(255, 99, 71, 0.8);
+  stroke-width: 0.5;
+}
+
+.treemap-cell rect {
+  stroke: #1a1d27;
+  stroke-width: 1.5;
+}
+
+.treemap-cell text {
+  fill: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* ── Explore: Stats Row ──────────────────────────────────────────────── */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto 24px;
+}
+
+.stat-card {
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #6c63ff;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #8a8da0;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Explore: Grid ───────────────────────────────────────────────────── */
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto 24px;
+}
+
+/* ── Explore: Horizontal Bars ────────────────────────────────────────── */
+
+.hbar {
+  fill: #6c63ff;
+  rx: 3;
+  transition: fill 0.15s;
+}
+.hbar:hover {
+  fill: #8b83ff;
+}
+
+.hbar-teal {
+  fill: #2dd4bf;
+}
+.hbar-teal:hover {
+  fill: #5eead4;
+}
+
+.hbar-label {
+  fill: #8a8da0;
+  font-size: 11px;
+}
+
+/* ── Explore: Stage Bars ─────────────────────────────────────────────── */
+
+.stage-bar {
+  fill: #f59e0b;
+  rx: 3;
+  transition: fill 0.15s;
+}
+.stage-bar:hover {
+  fill: #fbbf24;
+}
+
+/* ── Explore: Donut ──────────────────────────────────────────────────── */
+
+.donut-label {
+  fill: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.donut-center {
+  fill: #f5f5f5;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.donut-center-sub {
+  fill: #8a8da0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Explore: Data Table ─────────────────────────────────────────────── */
+
+.table-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.table-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a0a4b8;
+}
+
+.table-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-search {
+  background: #252836;
+  border: 1px solid #2a2d3a;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #e0e0e0;
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 280px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.table-search:focus {
+  border-color: #6c63ff;
+}
+
+.table-search::placeholder {
+  color: #555;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+#data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#data-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #8a8da0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #2a2d3a;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+#data-table th:hover {
+  color: #e0e0e0;
+}
+
+#data-table th .sort-icon {
+  font-size: 10px;
+  opacity: 0.4;
+  margin-left: 4px;
+}
+
+#data-table th.sorted-asc .sort-icon::after {
+  content: " ↑";
+}
+#data-table th.sorted-desc .sort-icon::after {
+  content: " ↓";
+}
+
+#data-table td {
+  padding: 9px 12px;
+  font-size: 0.84rem;
+  border-bottom: 1px solid #1f2230;
+  color: #c8cad4;
+}
+
+#data-table tbody tr {
+  transition: background 0.12s;
+}
+
+#data-table tbody tr:hover {
+  background: rgba(108, 99, 255, 0.06);
+}
+
+#data-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.stage-badge {
+  display: inline-block;
+  background: #252836;
+  border: 1px solid #2a2d3a;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  color: #a0a4b8;
+}
+
+/* ── Table Footer / Pager ────────────────────────────────────────────── */
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: #8a8da0;
+}
+
+.table-pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-btn {
+  background: #252836;
+  border: 1px solid #2a2d3a;
+  border-radius: 6px;
+  padding: 6px 14px;
+  color: #a0a4b8;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #2a2d3a;
+  color: #e0e0e0;
+}
+
+.page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+#page-indicator {
+  font-size: 0.82rem;
+  color: #8a8da0;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 800px) {
+  .dashboard,
+  .explore-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #timeline,
+  #map,
+  #treemap {
+    grid-column: 1;
+  }
+
+  .table-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .table-controls {
+    flex-direction: column;
+  }
+
+  .table-search {
+    width: 100%;
+  }
+
+  .year-dropdown {
+    width: 100%;
+  }
+}
