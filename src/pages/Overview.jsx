@@ -12,6 +12,7 @@ import { CompanyBadge } from "@/components/ui/CompanyBadge";
 import { TrendLineChart } from "@/components/charts/TrendLineChart";
 import { BrandedBarChart } from "@/components/charts/BrandedBarChart";
 import { IndustryHeatmap } from "@/components/charts/IndustryHeatmap";
+import { AnimatedBubbleChart } from "@/components/charts/AnimatedBubbleChart";
 import { useContainerWidth } from "@/hooks/useContainerWidth";
 
 const INDUSTRY_CAP = 12;
@@ -110,6 +111,27 @@ export function Overview() {
               height={340}
               yLabel="Layoffs"
               formatX={(d) => d3.timeFormat("%b %Y")(d)}
+            />
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="space-y-3" aria-labelledby="bubble-heading">
+        <div>
+          <h2 id="bubble-heading" className="text-base font-semibold">
+            Top 5 companies with most layoffs over 5 years
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Animated bubbles showing cumulative layoffs. Bubble size represents total workforce reduction over time.
+          </p>
+        </div>
+        <Card>
+          <CardContent className="pt-6 pb-4">
+            <AnimatedBubbleChart
+              records={records}
+              topN={5}
+              width={Math.max(w - 48, 500)}
+              height={600}
             />
           </CardContent>
         </Card>
