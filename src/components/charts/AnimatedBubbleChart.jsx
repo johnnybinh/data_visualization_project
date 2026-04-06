@@ -4,6 +4,125 @@ import companyBrands from "@/data/company_brands.json";
 
 const defaultMargin = { top: 60, right: 40, bottom: 80, left: 70 };
 
+function CompanyMultiSelect({ allCompanies, selectedCompanies, onSelectionChange, companyTotals }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredCompanies = useMemo(() => {
+    if (!search.trim()) return allCompanies;
+    const lower = search.toLowerCase();
+    return allCompanies.filter((c) => c.toLowerCase().includes(lower));
+  }, [allCompanies, search]);
+
+  const toggleCompany = (company) => {
+    if (selectedCompanies.includes(company)) {
+      onSelectionChange(selectedCompanies.filter((c) => c !== company));
+    } else {
+      onSelectionChange([...selectedCompanies, company]);
+    }
+  };
+
+  const selectAll = () => onSelectionChange([...allCompanies]);
+  const clearAll = () => onSelectionChange([]);
+
+  const fmt = (n) => d3.format(",")(Math.round(n));
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex h-9 items-center justify-between rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-w-[200px]"
+      >
+        <span className="truncate">
+          {selectedCompanies.length === 0
+            ? "Select companies"
+            : `${selectedCompanies.length} companies selected`}
+        </span>
+        <svg
+          className={`ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 mt-1 w-72 rounded-md border border-input bg-background shadow-lg">
+          <div className="p-2 border-b border-input">
+            <input
+              type="text"
+              placeholder="Search companies..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full h-8 px-2 text-sm rounded border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <div className="flex gap-2 p-2 border-b border-input">
+            <button
+              type="button"
+              onClick={selectAll}
+              className="text-xs px-2 py-1 rounded bg-muted hover:bg-muted/80 text-foreground"
+            >
+              Select All
+            </button>
+            <button
+              type="button"
+              onClick={clearAll}
+              className="text-xs px-2 py-1 rounded bg-muted hover:bg-muted/80 text-foreground"
+            >
+              Clear All
+            </button>
+          </div>
+          <div className="max-h-60 overflow-y-auto p-2">
+            {filteredCompanies.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-2 text-center">No companies found</p>
+            ) : (
+              filteredCompanies.map((company) => {
+                const isChecked = selectedCompanies.includes(company);
+                const color = companyBrands[company] || "#71717a";
+                const total = companyTotals[company] || 0;
+                return (
+                  <label
+                    key={company}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-muted/50"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleCompany(company)}
+                      className="h-4 w-4 rounded border-input"
+                    />
+                    <div
+                      className="w-3 h-3 rounded-full shrink-0"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span className="text-sm flex-1 truncate">{company}</span>
+                    <span className="text-xs text-muted-foreground">{fmt(total)}</span>
+                  </label>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function getInitials(name) {
   const words = name.split(/[\s.]+/).filter(Boolean);
   if (words.length === 1) {
@@ -43,98 +162,78 @@ export function AnimatedBubbleChart({
 
   const [currentYearIndex, setCurrentYearIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [visibleCompanies, setVisibleCompanies] = useState(new Set());
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedCompanies, setSelectedCompanies] = useState(null);
   const intervalRef = useRef(null);
   const svgRef = useRef(null);
-  const dropdownRef = useRef(null);
 
-  const { years, topCompanies, yearlyData, cumulativeData, cumulativeMax } =
-    useMemo(() => {
-      if (!records?.length)
-        return {
-          years: [],
-          topCompanies: [],
-          yearlyData: {},
-          cumulativeData: {},
-          cumulativeMax: 0,
-        };
+  const { years, allCompanies, defaultTopCompanies, companyTotals } = useMemo(() => {
+    if (!records?.length)
+      return {
+        years: [],
+        allCompanies: [],
+        defaultTopCompanies: [],
+        companyTotals: {},
+      };
 
-      const byCompany = d3.rollups(
-        records,
-        (v) => d3.sum(v, (d) => d.laidOff),
-        (d) => d.company,
-      );
-      byCompany.sort((a, b) => b[1] - a[1]);
-      const topCompanies = byCompany.slice(0, topN).map(([company]) => company);
+    const byCompany = d3.rollups(
+      records,
+      (v) => d3.sum(v, (d) => d.laidOff),
+      (d) => d.company,
+    );
+    byCompany.sort((a, b) => b[1] - a[1]);
 
-      const years = [...new Set(records.map((d) => d.year))].sort(
-        (a, b) => a - b,
-      );
+    const companyTotals = Object.fromEntries(byCompany);
+    const allCompanies = byCompany.map(([company]) => company);
+    const defaultTopCompanies = byCompany.slice(0, topN).map(([company]) => company);
 
-      const yearlyData = {};
-      years.forEach((year) => {
-        yearlyData[year] = {};
-        topCompanies.forEach((company) => {
-          const companyYearRecords = records.filter(
-            (r) => r.company === company && r.year === year,
-          );
-          const total = d3.sum(companyYearRecords, (d) => d.laidOff);
-          yearlyData[year][company] = total;
-        });
-      });
+    const years = [...new Set(records.map((d) => d.year))].sort((a, b) => a - b);
 
-      const cumulative = {};
-      topCompanies.forEach((company) => {
-        cumulative[company] = 0;
-      });
-
-      const cumulativeData = {};
-      let cumulativeMax = 0;
-      years.forEach((year) => {
-        cumulativeData[year] = {};
-        topCompanies.forEach((company) => {
-          cumulative[company] += yearlyData[year]?.[company] || 0;
-          cumulativeData[year][company] = cumulative[company];
-          if (cumulative[company] > cumulativeMax)
-            cumulativeMax = cumulative[company];
-        });
-      });
-
-      return { years, topCompanies, yearlyData, cumulativeData, cumulativeMax };
-    }, [records, topN]);
+    return { years, allCompanies, defaultTopCompanies, companyTotals };
+  }, [records, topN]);
 
   useEffect(() => {
-    if (topCompanies.length > 0 && visibleCompanies.size === 0) {
-      setVisibleCompanies(new Set(topCompanies));
+    if (selectedCompanies === null && defaultTopCompanies.length > 0) {
+      setSelectedCompanies(defaultTopCompanies);
     }
-  }, [topCompanies]);
+  }, [defaultTopCompanies, selectedCompanies]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const activeCompanies = selectedCompanies || defaultTopCompanies;
 
-  const toggleCompany = (company) => {
-    setVisibleCompanies((prev) => {
-      const next = new Set(prev);
-      if (next.has(company)) {
-        next.delete(company);
-      } else {
-        next.add(company);
-      }
-      return next;
+  const { yearlyData, cumulativeData, cumulativeMax } = useMemo(() => {
+    if (!records?.length || !activeCompanies.length)
+      return { yearlyData: {}, cumulativeData: {}, cumulativeMax: 0 };
+
+    const yearlyData = {};
+    years.forEach((year) => {
+      yearlyData[year] = {};
+      activeCompanies.forEach((company) => {
+        const companyYearRecords = records.filter(
+          (r) => r.company === company && r.year === year,
+        );
+        const total = d3.sum(companyYearRecords, (d) => d.laidOff);
+        yearlyData[year][company] = total;
+      });
     });
-  };
 
-  const filteredCompanies = useMemo(() => {
-    return topCompanies.filter((c) => visibleCompanies.has(c));
-  }, [topCompanies, visibleCompanies]);
+    const cumulative = {};
+    activeCompanies.forEach((company) => {
+      cumulative[company] = 0;
+    });
+
+    const cumulativeData = {};
+    let cumulativeMax = 0;
+    years.forEach((year) => {
+      cumulativeData[year] = {};
+      activeCompanies.forEach((company) => {
+        cumulative[company] += yearlyData[year]?.[company] || 0;
+        cumulativeData[year][company] = cumulative[company];
+        if (cumulative[company] > cumulativeMax)
+          cumulativeMax = cumulative[company];
+      });
+    });
+
+    return { yearlyData, cumulativeData, cumulativeMax };
+  }, [records, years, activeCompanies]);
 
   useEffect(() => {
     if (isPlaying && years.length > 0) {
@@ -160,10 +259,11 @@ export function AnimatedBubbleChart({
 
   const yScale = useMemo(() => {
     return d3
-      .scaleLinear()
-      .domain([0, 30000])
+      .scalePow()
+      .exponent(2)
+      .domain([0, cumulativeMax])
       .range([ih - 40, 40]);
-  }, [ih]);
+  }, [cumulativeMax, ih]);
 
   const radiusScale = useMemo(() => {
     return d3.scaleSqrt().domain([0, cumulativeMax]).range([12, 35]);
@@ -173,7 +273,7 @@ export function AnimatedBubbleChart({
     if (!currentYear || !cumulativeData[currentYear] || !xScale || !yScale)
       return [];
 
-    return filteredCompanies.map((company) => {
+    return activeCompanies.map((company) => {
       const cumLayoffs = cumulativeData[currentYear][company] || 0;
       const yearLayoffs = yearlyData[currentYear]?.[company] || 0;
       const color = companyBrands[company] || "#71717a";
@@ -195,7 +295,7 @@ export function AnimatedBubbleChart({
     currentYear,
     cumulativeData,
     yearlyData,
-    filteredCompanies,
+    activeCompanies,
     xScale,
     yScale,
     radiusScale,
@@ -204,7 +304,7 @@ export function AnimatedBubbleChart({
   const trails = useMemo(() => {
     if (!xScale || !yScale || !years.length) return [];
 
-    return filteredCompanies.map((company) => {
+    return activeCompanies.map((company) => {
       const color = companyBrands[company] || "#71717a";
 
       const points = years.slice(0, currentYearIndex + 1).map((year) => {
@@ -221,7 +321,7 @@ export function AnimatedBubbleChart({
       return { company, color, points };
     });
   }, [
-    filteredCompanies,
+    activeCompanies,
     years,
     currentYearIndex,
     cumulativeData,
@@ -238,7 +338,7 @@ export function AnimatedBubbleChart({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
@@ -249,80 +349,31 @@ export function AnimatedBubbleChart({
           <span className="text-3xl font-bold tabular-nums text-foreground">
             {currentYear}
           </span>
-
-          {/* Company filter dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="px-3 py-2 text-sm font-medium rounded-md border border-border bg-background hover:bg-muted transition-colors flex items-center gap-2"
-            >
-              <span>Companies ({filteredCompanies.length}/{topCompanies.length})</span>
-              <svg
-                className={`w-4 h-4 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute top-full left-0 mt-1 w-56 bg-background border border-border rounded-md shadow-lg z-50">
-                <div className="p-2 space-y-1">
-                  {topCompanies.map((company) => {
-                    const color = companyBrands[company] || "#71717a";
-                    const isVisible = visibleCompanies.has(company);
-                    return (
-                      <button
-                        key={company}
-                        onClick={() => toggleCompany(company)}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-muted transition-colors"
-                      >
-                        <div
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                            isVisible ? "border-primary bg-primary" : "border-muted-foreground"
-                          }`}
-                        >
-                          {isVisible && (
-                            <svg className="w-3 h-3 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: color }}
-                        />
-                        <span className={isVisible ? "text-foreground" : "text-muted-foreground"}>
-                          {company}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
-        <div className="flex gap-1">
-          {years.map((year, idx) => (
-            <button
-              key={year}
-              onClick={() => {
-                setCurrentYearIndex(idx);
-                setIsPlaying(false);
-              }}
-              className={`w-10 h-8 rounded text-xs font-medium transition-colors ${
-                idx === currentYearIndex
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              {year}
-            </button>
-          ))}
-        </div>
+        <CompanyMultiSelect
+          allCompanies={allCompanies}
+          selectedCompanies={activeCompanies}
+          onSelectionChange={setSelectedCompanies}
+          companyTotals={companyTotals}
+        />
+      </div>
+      <div className="flex justify-end gap-1">
+        {years.map((year, idx) => (
+          <button
+            key={year}
+            onClick={() => {
+              setCurrentYearIndex(idx);
+              setIsPlaying(false);
+            }}
+            className={`w-10 h-8 rounded text-xs font-medium transition-colors ${
+              idx === currentYearIndex
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-muted/80"
+            }`}
+          >
+            {year}
+          </button>
+        ))}
       </div>
 
       <svg
@@ -334,7 +385,7 @@ export function AnimatedBubbleChart({
         aria-label="Animated bubble chart showing company layoffs moving through time"
       >
         <defs>
-          {topCompanies.map((company) => {
+          {activeCompanies.map((company) => {
             const color = companyBrands[company] || "#71717a";
             return (
               <linearGradient
@@ -380,7 +431,7 @@ export function AnimatedBubbleChart({
 
           {/* Y-axis (layoff count) */}
           <g>
-            {[0, 5000, 10000, 15000, 20000, 25000, 30000].map((tick) => (
+            {yScale.ticks(5).map((tick) => (
               <g key={tick} transform={`translate(0,${yScale(tick)})`}>
                 <line
                   x1={-8}
@@ -551,7 +602,7 @@ export function AnimatedBubbleChart({
 
       {/* Company legend */}
       <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-        {filteredCompanies.map((company) => {
+        {activeCompanies.map((company) => {
           const color = companyBrands[company] || "#71717a";
           return (
             <div key={company} className="flex items-center gap-2">
