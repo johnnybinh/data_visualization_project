@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 const parseDate = d3.timeParse("%Y-%m-%d");
 const formatMonth = d3.timeFormat("%b %Y");
 
